@@ -54,29 +54,12 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
-import org.tron.api.GrpcAPI.AccountNetMessage;
-import org.tron.api.GrpcAPI.AccountResourceMessage;
 import org.tron.api.GrpcAPI.AddressPrKeyPairMessage;
-import org.tron.api.GrpcAPI.AssetIssueList;
-import org.tron.api.GrpcAPI.BlockExtention;
 import org.tron.api.GrpcAPI.BlockList;
-import org.tron.api.GrpcAPI.BlockListExtention;
-import org.tron.api.GrpcAPI.CanDelegatedMaxSizeResponseMessage;
-import org.tron.api.GrpcAPI.CanWithdrawUnfreezeAmountResponseMessage;
-import org.tron.api.GrpcAPI.DelegatedResourceList;
-import org.tron.api.GrpcAPI.ExchangeList;
-import org.tron.api.GrpcAPI.GetAvailableUnfreezeCountResponseMessage;
-import org.tron.api.GrpcAPI.Node;
 import org.tron.api.GrpcAPI.Note;
 import org.tron.api.GrpcAPI.NumberMessage;
-import org.tron.api.GrpcAPI.PricesResponseMessage;
-import org.tron.api.GrpcAPI.ProposalList;
-import org.tron.api.GrpcAPI.TransactionApprovedList;
-import org.tron.api.GrpcAPI.TransactionInfoList;
 import org.tron.api.GrpcAPI.TransactionList;
 import org.tron.api.GrpcAPI.TransactionListExtention;
-import org.tron.api.GrpcAPI.TransactionSignWeight;
-import org.tron.api.GrpcAPI.WitnessList;
 import org.tron.common.crypto.Hash;
 import org.tron.common.crypto.SignInterface;
 import org.tron.common.crypto.SignUtils;
@@ -106,26 +89,10 @@ import org.tron.core.zen.address.SpendingKey;
 import org.tron.keystore.StringUtils;
 import org.tron.ledger.TronLedgerGetAddress;
 import org.tron.ledger.listener.TransactionSignManager;
-import org.tron.ledger.wrapper.DebugConfig;
 import org.tron.ledger.wrapper.LedgerUserHelper;
 import org.tron.mnemonic.MnemonicUtils;
 import org.tron.protos.Protocol;
-import org.tron.protos.Protocol.Account;
-import org.tron.protos.Protocol.Block;
-import org.tron.protos.Protocol.ChainParameters;
-import org.tron.protos.Protocol.DelegatedResourceAccountIndex;
-import org.tron.protos.Protocol.Exchange;
-import org.tron.protos.Protocol.MarketOrder;
-import org.tron.protos.Protocol.MarketOrderList;
-import org.tron.protos.Protocol.MarketOrderPairList;
-import org.tron.protos.Protocol.MarketPriceList;
-import org.tron.protos.Protocol.Proposal;
-import org.tron.protos.Protocol.Transaction;
-import org.tron.protos.Protocol.TransactionInfo;
-import org.tron.protos.contract.AssetIssueContractOuterClass.AssetIssueContract;
 import org.tron.protos.contract.Common.ResourceCode;
-import org.tron.protos.contract.SmartContractOuterClass.SmartContract;
-import org.tron.protos.contract.SmartContractOuterClass.SmartContractDataWrapper;
 import org.tron.trident.api.GrpcAPI;
 import org.tron.trident.core.exceptions.IllegalException;
 import org.tron.trident.proto.Chain;
@@ -5574,7 +5541,7 @@ public class Client {
 
   }
 
-  private void gasFreeInfo(String[] parameters) throws NoSuchAlgorithmException, IOException, InvalidKeyException, CipherException, CancelException {
+  private void gasFreeInfo(String[] parameters) throws Exception {
     if (parameters.length > 1) {
       System.out.println("gasFreeInfo needs no parameter or 1 parameter like the following: ");
       System.out.println("gasFreeInfo Address ");

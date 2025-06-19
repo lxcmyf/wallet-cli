@@ -22,8 +22,8 @@ import static org.tron.gasfree.GasFreeApi.signOffChain;
 import static org.tron.gasfree.GasFreeApi.validateSignOffChain;
 import static org.tron.keystore.StringUtils.byte2Char;
 import static org.tron.keystore.StringUtils.char2Byte;
-import static org.tron.keystore.Wallet.decrypt2PrivateBytes;
 import static org.tron.keystore.StringUtils.clear;
+import static org.tron.keystore.Wallet.decrypt2PrivateBytes;
 import static org.tron.keystore.Wallet.validPassword;
 import static org.tron.keystore.WalletUtils.loadCredentials;
 import static org.tron.keystore.WalletUtils.show;
@@ -69,14 +69,11 @@ import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.tron.api.GrpcAPI;
-import org.tron.api.GrpcAPI.AssetIssueList;
-import org.tron.api.GrpcAPI.BlockExtention;
 import org.tron.api.GrpcAPI.BytesMessage;
 import org.tron.api.GrpcAPI.DecryptNotes;
 import org.tron.api.GrpcAPI.DecryptNotesMarked;
 import org.tron.api.GrpcAPI.DecryptNotesTRC20;
 import org.tron.api.GrpcAPI.DiversifierMessage;
-import org.tron.api.GrpcAPI.ExchangeList;
 import org.tron.api.GrpcAPI.ExpandedSpendingKeyMessage;
 import org.tron.api.GrpcAPI.IncomingViewingKeyDiversifierMessage;
 import org.tron.api.GrpcAPI.IncomingViewingKeyMessage;
@@ -84,24 +81,19 @@ import org.tron.api.GrpcAPI.IvkDecryptAndMarkParameters;
 import org.tron.api.GrpcAPI.IvkDecryptParameters;
 import org.tron.api.GrpcAPI.IvkDecryptTRC20Parameters;
 import org.tron.api.GrpcAPI.NfParameters;
-import org.tron.api.GrpcAPI.NodeList;
 import org.tron.api.GrpcAPI.Note;
 import org.tron.api.GrpcAPI.OvkDecryptParameters;
 import org.tron.api.GrpcAPI.OvkDecryptTRC20Parameters;
 import org.tron.api.GrpcAPI.PaymentAddressMessage;
-import org.tron.api.GrpcAPI.PricesResponseMessage;
 import org.tron.api.GrpcAPI.PrivateParameters;
 import org.tron.api.GrpcAPI.PrivateParametersWithoutAsk;
 import org.tron.api.GrpcAPI.PrivateShieldedTRC20Parameters;
 import org.tron.api.GrpcAPI.PrivateShieldedTRC20ParametersWithoutAsk;
-import org.tron.api.GrpcAPI.ProposalList;
 import org.tron.api.GrpcAPI.ReceiveNote;
 import org.tron.api.GrpcAPI.ShieldedTRC20Parameters;
 import org.tron.api.GrpcAPI.SpendNote;
 import org.tron.api.GrpcAPI.SpendNoteTRC20;
-import org.tron.api.GrpcAPI.TransactionInfoList;
 import org.tron.api.GrpcAPI.ViewingKeyMessage;
-import org.tron.api.GrpcAPI.WitnessList;
 import org.tron.common.enums.NetType;
 import org.tron.common.utils.AbiUtil;
 import org.tron.common.utils.ByteArray;
@@ -125,9 +117,7 @@ import org.tron.gasfree.GasFreeApi;
 import org.tron.gasfree.request.GasFreeSubmitRequest;
 import org.tron.gasfree.response.GasFreeAddressResponse;
 import org.tron.keystore.ClearWalletUtils;
-import org.tron.keystore.StringUtils;
 import org.tron.keystore.Credentials;
-import org.tron.keystore.Wallet;
 import org.tron.keystore.WalletFile;
 import org.tron.keystore.WalletUtils;
 import org.tron.ledger.LedgerAddressUtil;
@@ -140,22 +130,14 @@ import org.tron.ledger.listener.TransactionSignManager;
 import org.tron.ledger.wrapper.DebugConfig;
 import org.tron.mnemonic.MnemonicUtils;
 import org.tron.mnemonic.SubAccount;
-import org.tron.protos.Protocol.ChainParameters;
-import org.tron.protos.Protocol.Exchange;
-import org.tron.protos.Protocol.MarketOrder;
-import org.tron.protos.Protocol.MarketOrderList;
-import org.tron.protos.Protocol.MarketOrderPairList;
-import org.tron.protos.Protocol.MarketPriceList;
-import org.tron.protos.Protocol.Proposal;
-import org.tron.protos.contract.AssetIssueContractOuterClass.AssetIssueContract;
 import org.tron.protos.contract.ShieldContract.IncrementalMerkleVoucherInfo;
 import org.tron.protos.contract.ShieldContract.OutputPoint;
 import org.tron.protos.contract.ShieldContract.OutputPointInfo;
-import org.tron.walletserver.GrpcClient;
 import org.tron.trident.core.exceptions.IllegalException;
 import org.tron.trident.proto.Chain;
 import org.tron.trident.proto.Contract;
 import org.tron.trident.proto.Response;
+import org.tron.walletserver.GrpcClient;
 import org.tron.walletserver.WalletApi;
 import org.web3j.utils.Numeric;
 
@@ -2773,7 +2755,7 @@ public class WalletApiWrapper {
     return Pair.of(client, currentNet);
   }
 
-  public boolean getGasFreeInfo(String address) throws NoSuchAlgorithmException, IOException, InvalidKeyException, CipherException, CancelException {
+  public boolean getGasFreeInfo(String address) throws Exception {
     if (WalletApi.getCurrentNetwork() != MAIN && WalletApi.getCurrentNetwork() != NILE) {
       System.out.println(GAS_FREE_SUPPORT_NETWORK_TIP);
       return false;
@@ -2889,7 +2871,7 @@ public class WalletApiWrapper {
     boolean isLedgerFile = wf.getName().contains("Ledger");
     String signature = null;
     if (isLedgerFile) {
-      Transaction transaction = Transaction.newBuilder().setRawData(Transaction.raw.newBuilder().setData(ByteString.copyFrom(keccak256(concat)))).build();
+      Chain.Transaction transaction = Chain.Transaction.newBuilder().setRawData(Chain.Transaction.raw.newBuilder().setData(ByteString.copyFrom(keccak256(concat)))).build();
       boolean ledgerResult = LedgerSignUtil.requestLedgerSignLogic(transaction, ledgerPath, wf.getAddress(), true);
       if (ledgerResult) {
         signature = TransactionSignManager.getInstance().getGasfreeSignature();
