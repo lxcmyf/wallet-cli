@@ -4,6 +4,10 @@ Welcome to use the Wallet-CLI.
 
 If you need any help, please join the [Telegram](https://t.me/TronOfficialDevelopersGroupEn)
 
+The underlying implementation of all wallet-cli gRPC APIs has all migrated to the Trident APIs.
+
+The migration represents a significant architectural shift. This strategic move consolidates the underlying implementation of the wallet-cli's remote procedure calls, standardizing them under the robust and optimized Trident API framework. This unification not only streamlines development and maintenance efforts but also enhances the overall reliability, performance, and scalability of the Wallet-cli. The Trident APIs, known for their efficiency and comprehensive capabilities, now serve as the sole foundation for all gRPC interactions within the wallet-cli, ensuring a consistent and high-quality experience for users and developers alike.
+
 ## Get started
 
 ### Download wallet-cli
@@ -35,6 +39,129 @@ soliditynode = {
 } // NOTE: solidity node is optional
 
 blockNumberStartToScan = 22690588 // NOTE: this field is optional
+```
+
+## GasFree Support
+
+Wallet-cli now supports GasFree integration, allowing users to perform token transfers without paying gas fees directly. This guide explains the new commands and provides instructions on how to use them.
+
+For more details, please refer to GasFree [Documentation](https://gasfree.io/home) and [TronLink](https://support.tronlink.org/hc/en-us/articles/38903684778393-GasFree-User-Guide) User Guide For GasFree.
+
+Prerequisites
+API Credentials: Users must obtain the API Key and API Secret from GasFree for authentication. Refer to GasFree's official [documentation](https://docs.google.com/forms/d/e/1FAIpQLSc5EB1X8JN7LA4SAVAG99VziXEY6Kv6JxmlBry9rUBlwI-GaQ/viewform) for instructions on setting up API authentication.
+
+New Commands:
+
+### gas free info
+> GasFreeInfo
+
+Query GasFree Information
+Function: Retrieve the basic info, including the GasFree address associated with your current wallet address.
+Note: The GasFree address is automatically activated upon the first transfer, which may incur an activation fee.
+
+Example:
+```console
+wallet> gasfreeinfo
+balanceOf(address):70a08231
+{
+	"gasFreeAddress":"TCtSt8fCkZcVdrGpaVHUr6P8EmdjysswMF",
+	"active":true,
+	"tokenBalance":998696000,
+	"activateFee":0,
+	"transferFee":2000,
+	"maxTransferValue":998694000
+}
+gasFreeInfo:  successful !!
+```
+
+```console
+wallet> gasfreeinfo TRvVXgqddDGYRMx3FWf2tpVxXQQXDZxJQe
+balanceOf(address):70a08231
+{
+	"gasFreeAddress":"TCtSt8fCkZcVdrGpaVHUr6P8EmdjysswMF",
+	"active":true,
+	"tokenBalance":998696000,
+	"activateFee":0,
+	"transferFee":2000,
+	"maxTransferValue":998694000
+}
+gasFreeInfo:  successful !!
+```
+### gas free transfer
+> GasFreeTransfer
+
+Submit GasFree Transfer
+Function: Submit a gas-free token transfer request.
+
+Example:
+```console
+wallet> gasfreetransfer TEkj3ndMVEmFLYaFrATMwMjBRZ1EAZkucT 100000
+
+GasFreeTransfer result: {
+	"code":200,
+	"data":{
+		"amount":100000,
+		"providerAddress":"TKtWbdzEq5ss9vTS9kwRhBp5mXmBfBns3E",
+		"apiKey":"",
+		"accountAddress":"TUUSMd58eC3fKx3fn7whxJyr1FR56tgaP8",
+		"signature":"",
+		"targetAddress":"TEkj3ndMVEmFLYaFrATMwMjBRZ1EAZkucT",
+		"maxFee":2000000,
+		"version":1,
+		"nonce":8,
+		"tokenAddress":"TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf",
+		"createdAt":1747909635678,
+		"expiredAt":1747909695000,
+		"estimatedTransferFee":2000,
+		"id":"6c3ff67e-0bf4-4c09-91ca-0c7c254b01a0",
+		"state":"WAITING",
+		"estimatedActivateFee":0,
+		"gasFreeAddress":"TNER12mMVWruqopsW9FQtKxCGfZcEtb3ER",
+		"updatedAt":1747909635678
+	}
+}
+GasFreeTransfer  successful !!!
+```
+
+### gas free trace
+> GasFreeTrace
+
+Track Transfer Status
+Function: Check the progress of a GasFree transfer using the traceId obtained from GasFreeTransfer.
+
+Example:
+```console
+wallet> gasfreetrace 6c3ff67e-0bf4-4c09-91ca-0c7c254b01a0
+GasFreeTrace result: {
+	"code":200,
+	"data":{
+		"amount":100000,
+		"providerAddress":"TKtWbdzEq5ss9vTS9kwRhBp5mXmBfBns3E",
+		"txnTotalCost":102000,
+		"accountAddress":"TUUSMd58eC3fKx3fn7whxJyr1FR56tgaP8",
+		"txnActivateFee":0,
+		"estimatedTotalCost":102000,
+		"targetAddress":"TEkj3ndMVEmFLYaFrATMwMjBRZ1EAZkucT",
+		"txnBlockTimestamp":1747909638000,
+		"txnTotalFee":2000,
+		"nonce":8,
+		"estimatedTotalFee":2000,
+		"tokenAddress":"TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf",
+		"txnHash":"858f9a00776163b1f8a34467b9c5727657f8971a9f4e9d492f0a247fac0384f9",
+		"txnBlockNum":57175988,
+		"createdAt":1747909635678,
+		"expiredAt":1747909695000,
+		"estimatedTransferFee":2000,
+		"txnState":"ON_CHAIN",
+		"id":"6c3ff67e-0bf4-4c09-91ca-0c7c254b01a0",
+		"state":"CONFIRMING",
+		"estimatedActivateFee":0,
+		"gasFreeAddress":"TNER12mMVWruqopsW9FQtKxCGfZcEtb3ER",
+		"txnTransferFee":2000,
+		"txnAmount":100000
+	}
+}
+GasFreeTrace:  successful!!
 ```
 
 ### Run a web wallet
@@ -1841,112 +1968,6 @@ currentNetwork: NILE
 wallet> currentnetwork
 current network: CUSTOM
 fullNode: EMPTY, solidityNode: localhost:50052
-```
-
-## gas free info
-    > GasFreeInfo
->Get gasfree info of the current address.
-
-Example:
-```console
-wallet> gasfreeinfo
-balanceOf(address):70a08231
-{
-	"gasFreeAddress":"TCtSt8fCkZcVdrGpaVHUr6P8EmdjysswMF",
-	"active":true,
-	"tokenBalance":998696000,
-	"activateFee":0,
-	"transferFee":2000,
-	"maxTransferValue":998694000
-}
-gasFreeInfo:  successful !!
-```
-
-```console
-wallet> gasfreeinfo TRvVXgqddDGYRMx3FWf2tpVxXQQXDZxJQe
-balanceOf(address):70a08231
-{
-	"gasFreeAddress":"TCtSt8fCkZcVdrGpaVHUr6P8EmdjysswMF",
-	"active":true,
-	"tokenBalance":998696000,
-	"activateFee":0,
-	"transferFee":2000,
-	"maxTransferValue":998694000
-}
-gasFreeInfo:  successful !!
-```
-
-## gas free transfer
-    > GasFreeTransfer
->Transfer funds through gas-free.
-
-Example:
-```console
-wallet> gasfreetransfer TEkj3ndMVEmFLYaFrATMwMjBRZ1EAZkucT 100000
-
-GasFreeTransfer result: {
-	"code":200,
-	"data":{
-		"amount":100000,
-		"providerAddress":"TKtWbdzEq5ss9vTS9kwRhBp5mXmBfBns3E",
-		"apiKey":"",
-		"accountAddress":"TUUSMd58eC3fKx3fn7whxJyr1FR56tgaP8",
-		"signature":"",
-		"targetAddress":"TEkj3ndMVEmFLYaFrATMwMjBRZ1EAZkucT",
-		"maxFee":2000000,
-		"version":1,
-		"nonce":8,
-		"tokenAddress":"TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf",
-		"createdAt":1747909635678,
-		"expiredAt":1747909695000,
-		"estimatedTransferFee":2000,
-		"id":"6c3ff67e-0bf4-4c09-91ca-0c7c254b01a0",
-		"state":"WAITING",
-		"estimatedActivateFee":0,
-		"gasFreeAddress":"TNER12mMVWruqopsW9FQtKxCGfZcEtb3ER",
-		"updatedAt":1747909635678
-	}
-}
-GasFreeTransfer  successful !!!
-```
-
-## gas free trace
-    > GasFreeTrace
->Query GasFreeTrace to obtain transfer details by using the transaction ID returned by GasFreeTransfer as the traceId.
-
-Example:
-```console
-wallet> gasfreetrace 6c3ff67e-0bf4-4c09-91ca-0c7c254b01a0
-GasFreeTrace result: {
-	"code":200,
-	"data":{
-		"amount":100000,
-		"providerAddress":"TKtWbdzEq5ss9vTS9kwRhBp5mXmBfBns3E",
-		"txnTotalCost":102000,
-		"accountAddress":"TUUSMd58eC3fKx3fn7whxJyr1FR56tgaP8",
-		"txnActivateFee":0,
-		"estimatedTotalCost":102000,
-		"targetAddress":"TEkj3ndMVEmFLYaFrATMwMjBRZ1EAZkucT",
-		"txnBlockTimestamp":1747909638000,
-		"txnTotalFee":2000,
-		"nonce":8,
-		"estimatedTotalFee":2000,
-		"tokenAddress":"TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf",
-		"txnHash":"858f9a00776163b1f8a34467b9c5727657f8971a9f4e9d492f0a247fac0384f9",
-		"txnBlockNum":57175988,
-		"createdAt":1747909635678,
-		"expiredAt":1747909695000,
-		"estimatedTransferFee":2000,
-		"txnState":"ON_CHAIN",
-		"id":"6c3ff67e-0bf4-4c09-91ca-0c7c254b01a0",
-		"state":"CONFIRMING",
-		"estimatedActivateFee":0,
-		"gasFreeAddress":"TNER12mMVWruqopsW9FQtKxCGfZcEtb3ER",
-		"txnTransferFee":2000,
-		"txnAmount":100000
-	}
-}
-GasFreeTrace:  successful!!
 ```
 
 ## switch wallet
