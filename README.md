@@ -1,12 +1,12 @@
-# wallet-cli
+# Wallet-cli
 
 Welcome to use the Wallet-CLI.  
 
-If you need any help, please join the [Telegram](https://t.me/TronOfficialDevelopersGroupEn)
+Wallet-cli now supports GasFree features, allowing users to perform token transfers without paying gas fees directly. For more detail, please check the GasFree section below.
 
-The underlying implementation of all wallet-cli gRPC APIs has all migrated to the Trident APIs.
+The underlying implementation of all Wallet-cli gRPC APIs has all migrated to the Trident APIs. The migration represents a significant architectural shift. This strategic move consolidates the underlying implementation of the Wallet-cli's remote procedure calls, standardizing them under the robust and optimized Trident API framework. This unification not only streamlines development and maintenance efforts but also enhances the overall reliability, performance, and scalability of the Wallet-cli. The Trident APIs, known for their efficiency and comprehensive capabilities, now serve as the sole foundation for all gRPC interactions within the Wallet-cli, ensuring a consistent and high-quality experience for users and developers alike.
 
-The migration represents a significant architectural shift. This strategic move consolidates the underlying implementation of the wallet-cli's remote procedure calls, standardizing them under the robust and optimized Trident API framework. This unification not only streamlines development and maintenance efforts but also enhances the overall reliability, performance, and scalability of the Wallet-cli. The Trident APIs, known for their efficiency and comprehensive capabilities, now serve as the sole foundation for all gRPC interactions within the wallet-cli, ensuring a consistent and high-quality experience for users and developers alike.
+If you need any help, please join the [Telegram](https://t.me/TronOfficialDevelopersGroupEn).
 
 ## Get started
 
@@ -43,16 +43,16 @@ blockNumberStartToScan = 22690588 // NOTE: this field is optional
 
 ## GasFree Support
 
-Wallet-cli now supports GasFree integration, allowing users to perform token transfers without paying gas fees directly. This guide explains the new commands and provides instructions on how to use them.
+Wallet-cli now supports GasFree integration. This guide explains the new commands and provides instructions on how to use them.
 
-For more details, please refer to GasFree [Documentation](https://gasfree.io/home) and [TronLink](https://support.tronlink.org/hc/en-us/articles/38903684778393-GasFree-User-Guide) User Guide For GasFree.
+For more details, please refer to  [GasFree Documentation](https://gasfree.io/specification) and [TronLink User Guide For GasFree](https://support.tronlink.org/hc/en-us/articles/38903684778393-GasFree-User-Guide).
 
 Prerequisites
-API Credentials: Users must obtain the API Key and API Secret from GasFree for authentication. Refer to GasFree's official [documentation](https://docs.google.com/forms/d/e/1FAIpQLSc5EB1X8JN7LA4SAVAG99VziXEY6Kv6JxmlBry9rUBlwI-GaQ/viewform) for instructions on setting up API authentication.
+API Credentials: Users must obtain the API Key and API Secret from GasFree for authentication. Please refer to the official [application form](https://docs.google.com/forms/d/e/1FAIpQLSc5EB1X8JN7LA4SAVAG99VziXEY6Kv6JxmlBry9rUBlwI-GaQ/viewform) for instructions on setting up API authentication.
 
 New Commands:
 
-### gas free info
+### GasFree info
 > GasFreeInfo
 
 Query GasFree Information
@@ -87,7 +87,7 @@ balanceOf(address):70a08231
 }
 gasFreeInfo:  successful !!
 ```
-### gas free transfer
+### GasFree transfer
 > GasFreeTransfer
 
 Submit GasFree Transfer
@@ -123,7 +123,7 @@ GasFreeTransfer result: {
 GasFreeTransfer  successful !!!
 ```
 
-### gas free trace
+### GasFree trace
 > GasFreeTrace
 
 Track Transfer Status
