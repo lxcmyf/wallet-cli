@@ -60,6 +60,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.bouncycastle.util.encoders.Hex;
 import org.jetbrains.annotations.Nullable;
@@ -134,7 +138,7 @@ public class Utils {
 
   public static final int MIN_LENGTH = 2;
   public static final int MAX_LENGTH = 14;
-  public static final String VERSION = " v4.9.3";
+  public static final String VERSION = " v4.9.4";
   public static final String TRANSFER_METHOD_ID = "a9059cbb";
 
   private static SecureRandom random = new SecureRandom();
@@ -326,6 +330,36 @@ public class Utils {
     return password0;
   }
 
+  private static char[] dialogPassword() {
+    final JPasswordField pf = new JPasswordField();
+
+    final JOptionPane pane = new JOptionPane(
+        pf,
+        JOptionPane.PLAIN_MESSAGE,
+        JOptionPane.OK_CANCEL_OPTION);
+
+    final JDialog dialog = pane.createDialog("Please input your password:");
+
+    dialog.setAlwaysOnTop(true);
+
+    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+      @Override
+      public void windowOpened(java.awt.event.WindowEvent e) {
+        pf.requestFocusInWindow();
+      }
+    });
+
+    dialog.setVisible(true);
+    dialog.dispose();
+
+    Object selectedValue = pane.getValue();
+    if (selectedValue instanceof Integer && ((Integer) selectedValue) == JOptionPane.OK_OPTION) {
+      return pf.getPassword();
+    }
+
+    return new char[0];
+  }
+
   public static char[] inputPassword(boolean checkStrength) throws IOException {
     char[] password;
     Console cons = System.console();
@@ -333,18 +367,11 @@ public class Utils {
       if (cons != null) {
         password = cons.readPassword("password: ");
       } else {
-        byte[] passwd0 = new byte[64];
-        int len = System.in.read(passwd0, 0, passwd0.length);
-        int i;
-        for (i = 0; i < len; i++) {
-          if (passwd0[i] == 0x09 || passwd0[i] == 0x0A) {
-            break;
-          }
+        password = dialogPassword();
+        if (ArrayUtils.isEmpty(password)) {
+          throw new IOException("Cancelled");
         }
-        byte[] passwd1 = Arrays.copyOfRange(passwd0, 0, i);
-        password = StringUtils.byte2Char(passwd1);
-        StringUtils.clear(passwd0);
-        StringUtils.clear(passwd1);
+        return password;
       }
       if (WalletApi.passwordValid(password)) {
         return password;

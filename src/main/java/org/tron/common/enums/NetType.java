@@ -30,7 +30,7 @@ public enum NetType {
           "https://open-test.gasfree.io",
           "/nile"),
       "TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf",
-      "https://apinile.walletadapter.org"),
+      "https://testlist.tronlink.org"),
   SHASTA(
       "https://api.shasta.trongrid.io",
       new Grpc(TRONGRID_SHASTA, TRONGRID_SHASTA_SOLIDITY),
