@@ -13,6 +13,7 @@ import static org.tron.walletserver.WalletApi.encode58Check;
 import java.util.HashMap;
 import java.util.List;
 import lombok.Getter;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.util.encoders.Hex;
 import org.tron.common.enums.NetType;
 import org.tron.trident.abi.datatypes.Type;
@@ -111,6 +112,17 @@ public class ApiClient {
       return false;
     }
     return true;
+  }
+
+  public Pair<Boolean, String> broadcastTransactionWithMessage(Chain.Transaction signaturedTransaction) {
+    try {
+      client.broadcastTransaction(signaturedTransaction);
+      return Pair.of(true, "");
+    } catch (RuntimeException e) {
+      String message = e.getMessage() == null ? "" : e.getMessage();
+      System.out.println(message);
+      return Pair.of(false, message);
+    }
   }
 
   public Response.TransactionSignWeight getTransactionSignWeight(Chain.Transaction transaction) {// pass

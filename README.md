@@ -10,6 +10,10 @@ If you need any help, please join the [Telegram](https://t.me/TronOfficialDevelo
 
 ## Get started
 
+### Requirements
+
+* JDK 17+
+
 ### Download Wallet-cli
 
     git clone https://github.com/tronprotocol/wallet-cli.git
@@ -104,6 +108,33 @@ tronlink = {
     $ cd build/libs
     $ java -jar wallet-cli.jar
     ```
+
+### MCP Server (Expose Wallet-Cli Tools)
+
+Wallet-cli can run as an MCP Server so external AI clients can call wallet tools.
+
+1. Build:
+
+   ```console
+   $ ./gradlew build
+   ```
+
+2. Start the MCP server (stdio transport):
+
+   ```console
+   $ java -cp build/libs/wallet-cli.jar org.tron.walletcli.mcp.McpServerMain
+   ```
+
+3. Tools exposed:
+
+   * `wallet_list_commands`
+   * `wallet_help`
+   * `wallet_get_latest_block`
+   * `wallet_get_balance`
+   * `wallet_get_account`
+   * `wallet_sendcoin` (state-changing; Ledger sign flow, requires `ownerAddress`, `toAddress`, `amountTrx`)
+
+Note: MCP stdio requires stdout to be reserved for protocol messages. Logs go to stderr.
 
 ### Connect to Java-tron
 

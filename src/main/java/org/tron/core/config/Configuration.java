@@ -48,18 +48,26 @@ public class Configuration {
 
     if (config == null) {
       File configFile = new File(System.getProperty("user.dir")+'/'+configurationPath);
-      if(configFile.exists()){
+      if (configFile.exists()) {
         try {
           config = ConfigFactory.parseReader(new InputStreamReader(new FileInputStream(configurationPath)));
-          System.out.println("Use user defined config file in current dir");
+          log("Use user defined config file in current dir");
         } catch (FileNotFoundException e) {
-          System.out.println("Load user defined config file exception: " + e.getMessage());
+          log("Load user defined config file exception: " + e.getMessage());
         }
-      }else {
+      } else {
         config = ConfigFactory.load(configurationPath);
-        System.out.println("User defined config file doesn't exists, use default config file in jar");
+        log("User defined config file doesn't exists, use default config file in jar");
       }
     }
     return config;
+  }
+
+  private static void log(String message) {
+    if (Boolean.getBoolean("mcp.mode")) {
+      System.err.println(message);
+    } else {
+      System.out.println(message);
+    }
   }
 }

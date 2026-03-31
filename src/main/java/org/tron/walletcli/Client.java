@@ -114,6 +114,7 @@ import org.tron.trident.proto.Common;
 import org.tron.trident.proto.Contract;
 import org.tron.trident.proto.Response;
 import org.tron.walletserver.WalletApi;
+import org.tron.core.config.Configuration;
 
 public class Client {
 
@@ -257,6 +258,10 @@ public class Client {
       "WithdrawBalance",
       "WithdrawExpireUnfreeze",
   };
+
+  public static String[] getCommandList() {
+    return Arrays.copyOf(commandList, commandList.length);
+  }
 
   @Parameter(names = {"-v", "--version"}, description = "Display version information", help = true)
   private boolean version;

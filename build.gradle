@@ -26,9 +26,17 @@ apply plugin: 'com.google.protobuf'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'application'
 
-sourceCompatibility = 1.8
-targetCompatibility = JavaVersion.VERSION_1_8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 17
+}
 
 //compileJava.options*.compilerArgs = [
 //        "-Xlint:serial", "-Xlint:varargs", "-Xlint:classfile", "-Xlint:dep-ann",
@@ -59,6 +67,8 @@ sourceSets {
 }
 
 dependencies {
+    implementation platform("io.modelcontextprotocol.sdk:mcp-bom:0.12.1")
+    implementation "io.modelcontextprotocol.sdk:mcp"
     implementation group: 'junit', name: 'junit', version: '4.13.2'
     implementation group: 'com.beust', name: 'jcommander', version: '1.82'
     //compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
