@@ -195,8 +195,9 @@ public class EncodingConverter {
       String line = scanner.nextLine().trim();
       if (line.isEmpty()) break;
 
+      byte[] pri = null;
       try {
-        byte[] pri = Hex.decode(line);
+        pri = Hex.decode(line);
         ECKey ecKey = fromPrivate(pri);
         byte[] address = ecKey.getAddress();
         System.out.println("Public Key: " + Hex.toHexString(ecKey.getPubKey()));
@@ -206,6 +207,10 @@ public class EncodingConverter {
         System.out.println("Address (Hex String): " + Hex.toHexString(address));
       } catch (Exception e) {
         System.out.println("Input is invalid.");
+      } finally {
+        if (pri != null) {
+          Arrays.fill(pri, (byte) 0);
+        }
       }
     }
   }

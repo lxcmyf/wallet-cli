@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sudo pfctl:*)",
+      "Bash(sudo /usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate)",
+      "Bash(ipconfig getifaddr:*)",
+      "Bash(semgrep --config=auto --severity=ERROR --severity=WARNING --exclude=*/bin/* --exclude=*/build/* --json --quiet .)",
+      "Bash(semgrep --config=p/owasp-top-ten --config=p/java --severity=ERROR --severity=WARNING --exclude=*/bin/* --exclude=*/build/* --json --quiet .)",
+      "Bash(pip3 install:*)",
+      "Bash(xargs ls:*)",
+      "Bash(chmod:*)",
+      "Bash(semgrep:*)",
+      "Bash(python3:*)",
+      "Bash(ln -sf ../../scripts/pre-commit-security-check.sh /Users/liuxincheng/IdeaProjects/wallet-cli/.git/hooks/pre-commit)",
+      "Bash(git checkout:*)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'CHANGED=$(git diff --name-only --diff-filter=ACM -- \"*.java\" 2>/dev/null); if [ -z \"$CHANGED\" ]; then exit 0; fi; if ! command -v semgrep &>/dev/null; then exit 0; fi; RESULT=$(semgrep --config=auto --severity=ERROR --severity=WARNING --exclude=\"*/bin/*\" --exclude=\"*/build/*\" --json --quiet $CHANGED 2>/dev/null || true); COUNT=$(echo \"$RESULT\" | python3 -c \"import json,sys; data=json.load(sys.stdin); print(len(data.get(\\\"results\\\",[])))\"); if [ \"$COUNT\" != \"0\" ] && [ \"$COUNT\" != \"\" ]; then echo \"[security-review] Found $COUNT issue(s) in changed Java files. Run /code-rw for full audit.\"; fi'"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -4267,6 +4267,7 @@ public class Client {
     byte[] privateKeyFromMnemonic = getPrivateKeyFromMnemonic(mnemonicWords);
     System.out.println(yellowBoldHighlight("Note: This will generate the private key through the default path(m/44'/195'/0'/0/0)."));
     System.out.println("Private key: " + Hex.toHexString(privateKeyFromMnemonic));
+    StringUtils.clear(privateKeyFromMnemonic);
   }
 
   private void encodingConverter() {

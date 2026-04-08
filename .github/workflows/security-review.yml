@@ -1,0 +1,121 @@
+name: Security Review
+
+on:
+  pull_request:
+    branches: [develop, master]
+    paths:
+      - '**.java'
+  push:
+    branches: [develop, master]
+    paths:
+      - '**.java'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  semgrep-scan:
+    name: Semgrep Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep (auto rules)
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: auto
+        env:
+          SEMGREP_RULES: >-
+            p/owasp-top-ten
+            p/java
+
+      - name: Run Semgrep CLI (detailed report)
+        run: |
+          pip3 install semgrep
+          echo "## Auto + OWASP + Java Rules" >> "$GITHUB_STEP_SUMMARY"
+          semgrep --config=auto --config=p/owasp-top-ten --config=p/java \
+            --severity=ERROR --severity=WARNING \
+            --exclude='*/bin/*' --exclude='*/build/*' \
+            --json --quiet . 2>/dev/null | python3 -c "
+          import json, sys
+          data = json.load(sys.stdin)
+          results = data.get('results', [])
+          if not results:
+              print('No issues found.')
+              sys.exit(0)
+          seen = set()
+          deduped = []
+          for r in results:
+              key = (r.get('path',''), r.get('start',{}).get('line',''), r.get('check_id',''))
+              if key not in seen:
+                  seen.add(key)
+                  deduped.append(r)
+          print(f'Found {len(deduped)} unique issue(s):')
+          print()
+          errors = 0
+          for r in deduped:
+              sev = r.get('extra', {}).get('severity', 'UNKNOWN')
+              msg = r.get('extra', {}).get('message', 'No description')
+              path = r.get('path', '?')
+              line = r.get('start', {}).get('line', '?')
+              rule = r.get('check_id', '?')
+              if sev == 'ERROR':
+                  errors += 1
+              print(f'[{sev}] {path}:{line}')
+              print(f'  Rule: {rule}')
+              print(f'  Issue: {msg}')
+              print()
+          if errors > 0:
+              print(f'::error::{errors} ERROR-level issue(s) found. Please fix before merging.')
+              sys.exit(1)
+          " | tee -a "$GITHUB_STEP_SUMMARY"
+
+  crypto-audit:
+    name: Crypto Pattern Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for banned crypto patterns
+        run: |
+          echo "Checking for banned cryptographic patterns..."
+          EXIT_CODE=0
+
+          # AES/ECB mode
+          if grep -rn 'AES/ECB' --include='*.java' src/; then
+            echo "::warning::AES/ECB mode detected. Use AES/GCM or AES/CBC instead."
+          fi
+
+          # MD5 usage
+          if grep -rn 'MessageDigest.getInstance.*MD5' --include='*.java' src/; then
+            echo "::error::MD5 hash detected. Use SHA-256 or stronger."
+            EXIT_CODE=1
+          fi
+
+          # DES usage
+          if grep -rn 'DES/' --include='*.java' src/; then
+            echo "::error::DES encryption detected. Use AES-256 instead."
+            EXIT_CODE=1
+          fi
+
+          # Hardcoded passwords/keys
+          if grep -rn 'password\s*=\s*"[^"]\+"' --include='*.java' src/ | grep -v 'test/' | grep -v '//'; then
+            echo "::error::Potential hardcoded password detected."
+            EXIT_CODE=1
+          fi
+
+          # printStackTrace
+          COUNT=$(grep -rn 'printStackTrace' --include='*.java' src/ | wc -l)
+          if [ "$COUNT" -gt 0 ]; then
+            echo "::warning::Found $COUNT occurrence(s) of printStackTrace(). Use slf4j logging instead."
+          fi
+
+          exit $EXIT_CODE
